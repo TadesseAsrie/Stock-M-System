@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
@@ -16,9 +17,9 @@ const Layout = ({ children }) => {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 1024) {
-        setSidebarOpen(false);
+        setSidebarOpen(false); // sidebar stays closed on mobile
       } else {
-        setSidebarOpen(true);
+        setSidebarOpen(true); // sidebar open on desktop
       }
     };
     handleResize();
@@ -28,17 +29,23 @@ const Layout = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Sidebar
-        isOpen={sidebarOpen}
-        onToggle={() => setSidebarOpen(!sidebarOpen)}
-      />
+      {/* Sidebar - hidden on mobile, visible on desktop */}
+      <div className="hidden lg:block">
+        <Sidebar
+          isOpen={sidebarOpen}
+          onToggle={() => setSidebarOpen(!sidebarOpen)}
+        />
+      </div>
+
+      {/* Mobile drawer */}
       <MobileDrawer
         isOpen={mobileDrawerOpen}
         onClose={() => setMobileDrawerOpen(false)}
       />
 
+      {/* Main content - margin adjusts only on desktop when sidebar is open */}
       <div
-        className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-64" : "lg:ml-20"}`}
+        className={`transition-all duration-300 ${sidebarOpen && window.innerWidth >= 1024 ? "lg:ml-64" : "lg:ml-20"}`}
       >
         <TopNavbar
           onMenuClick={() => {
